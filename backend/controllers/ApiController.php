@@ -66,16 +66,15 @@ class ApiController extends Controller
             return ['success' => false, 'message' => 'Please login first'];
         }
 
-        $url = Yii::$app->request->post('url');
-        $type = Yii::$app->request->post('type'); // 'up' or 'down'
+        $articleData = Yii::$app->request->post();
 
-        if (empty($url) || !in_array($type, ['up', 'down'])) {
-            return ['success' => false, 'message' => 'Invalid data'];
+        if (empty($articleData['url'])) {
+            return ['success' => false, 'message' => 'Invalid article data'];
         }
 
         try {
-            $newRating = Rating::setRating(Yii::$app->user->id, $url, $type);
-            $counts = Rating::getRatingCounts($url);
+            $newRating = Rating::setRating(Yii::$app->user->id, $articleData);
+            $counts = Rating::getRatingCounts($articleData['url']);
 
             return [
                 'success' => true,

@@ -14,10 +14,10 @@ $this->title = 'Bookmarks - Portal Berita';
 <?php else: ?>
     <?php foreach ($bookmarks as $bookmark): ?>
         <div class="article-card" data-url="<?= Html::encode($bookmark->article_url) ?>">
-            <img src="<?= Html::encode($bookmark->url_to_image ?? 'https://via.placeholder.com/200x150?text=No+Image') ?>"
+            <img src="<?= Html::encode($bookmark->url_to_image ?? Yii::getAlias('@webroot/assets/monitor.jpg')) ?>"
                 alt="Article Image"
                 class="article-image"
-                onerror="this.src='https://via.placeholder.com/200x150?text=No+Image'">
+                onerror="this.src='<?php Yii::getAlias('@webroot/assets/monitor.jpg'); ?>'">
 
             <div class="article-content">
                 <a href="<?= Html::encode($bookmark->article_url) ?>"
@@ -100,15 +100,25 @@ $script = <<< JS
             const btn = $(this);
             const card = btn.closest('.article-card');
             const articleUrl = card.data('url');
-            const type = btn.data('type');
+            const typeData = btn.data('type');
+            const articleData = {
+                url: articleUrl,
+                title: card.find('.article-title').text().trim(),
+                author: card.find('.article-meta .fa-user').parent().text().trim(),
+                description: card.find('.article-description').text().trim(),
+                content: card.find('.text-muted').text().trim(),
+                source: {
+                    name: card.find('.article-meta .fa-building').parent().text().trim()
+                },
+                publishedAt: card.find('.article-meta .fa-calendar').parent().text().trim(),
+                urlToImage: card.find('.article-image').attr('src'),
+                type: typeData
+            };
 
             $.ajax({
                 url: '$rating',
                 method: 'POST',
-                data: {
-                    url: articleUrl,
-                    type: type
-                },
+                data: articleData,
                 success: function(response) {
                     if (response.success) {
                         const upBtn = card.find('.rating-up');

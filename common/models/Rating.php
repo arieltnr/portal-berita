@@ -63,29 +63,36 @@ class Rating extends ActiveRecord
         return $rating ? $rating->rating_type : null;
     }
 
-    public static function setRating($userId, $articleUrl, $type)
+    public static function setRating($userId, $articleData)
     {
-        $rating = self::findOne(['user_id' => $userId, 'article_url' => $articleUrl]);
+        $rating = self::findOne(['user_id' => $userId, 'article_url' => $articleData['url']]);
 
         if ($rating) {
-            if ($rating->rating_type == $type) {
+            if ($rating->rating_type == $articleData['type']) {
                 // Remove rating if clicking same button
                 $rating->delete();
                 return null;
             } else {
                 // Change rating
-                $rating->rating_type = $type;
+                $rating->rating_type = $articleData['type'];
                 $rating->save();
-                return $type;
+                return $articleData['type'];
             }
         } else {
             // Create new rating
             $rating = new self();
             $rating->user_id = $userId;
-            $rating->article_url = $articleUrl;
-            $rating->rating_type = $type;
+            $rating->article_url = $articleData['url'];
+            $rating->rating_type = $articleData['type'];
+            $rating->article_title = $articleData['title'] ?? null;
+            $rating->article_author = $articleData['author'] ?? null;
+            $rating->article_description = $articleData['description'] ?? null;
+            $rating->article_content = $articleData['content'] ?? null;
+            $rating->article_source = isset($articleData['source']['name']) ? $articleData['source']['name'] : null;
+            $rating->published_at = $articleData['publishedAt'] ?? null;
+            $rating->url_to_image = $articleData['urlToImage'] ?? null;
             $rating->save();
-            return $type;
+            return $articleData['type'];
         }
     }
 }

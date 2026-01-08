@@ -71,6 +71,13 @@ class m130524_201442_init extends Migration
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'article_url' => $this->string(500)->notNull(),
+            'article_title' => $this->text(),
+            'article_author' => $this->string(255),
+            'article_description' => $this->text(),
+            'article_content' => $this->text(),
+            'article_source' => $this->string(255),
+            'published_at' => $this->timestamp(),
+            'url_to_image' => $this->string(500),
             'rating_type' => $this->string(10)->notNull(),
             'created_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);

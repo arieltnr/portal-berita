@@ -22,7 +22,7 @@ class NewsApiService extends Component
         }
     }
 
-    public function getTopHeadlines($country = 'us', $category = null, $page = 1, $pageSize = 10)
+    public function getTopHeadlines($country = 'us', $category = null, $page = 1, $pageSize = 11)
     {
         $params = [
             'country' => $country,
@@ -37,7 +37,7 @@ class NewsApiService extends Component
         return $this->request('/top-headlines', $params);
     }
 
-    public function searchNews($query, $from = null, $sortBy = 'publishedAt', $page = 1, $pageSize = 10)
+    public function searchNews($query, $from = null, $sortBy = 'publishedAt', $page = 1, $pageSize = 11)
     {
         $params = [
             'q' => $query,
@@ -53,7 +53,7 @@ class NewsApiService extends Component
         return $this->request('/everything', $params);
     }
 
-    public function getTodayNewsByCategory($category, $country = 'us', $pageSize = 10)
+    public function getTodayNewsByCategory($category, $country = 'us', $pageSize = 11)
     {
         $today = date('Y-m-d');
 

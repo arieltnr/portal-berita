@@ -7,6 +7,13 @@ use yii\widgets\ActiveForm;
 $this->title = 'Daftar - Portal Berita';
 ?>
 
+<style>
+    .help-block,
+    .hint-block {
+        color: red;
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow">
@@ -50,7 +57,8 @@ $this->title = 'Daftar - Portal Berita';
                 <?= $form->field($model, 'password')->passwordInput([
                     'placeholder' => 'Password',
                     'class' => 'form-control form-control-lg required'
-                ])->label('Password')->hint('Min 12 karakter, 1 huruf kapital, 1 angka, 1 simbol') ?>
+                ])->label('Password') ?>
+                <div id="pass-feedback" class="mb-3"></div>
 
                 <?= $form->field($model, 'repeat_password')->passwordInput([
                     'placeholder' => 'Ulangi Password',
@@ -76,6 +84,8 @@ $this->title = 'Daftar - Portal Berita';
 
 <?php
 $checkEmailUrl = Url::to(['/api/check-email']);
+$checkPassUrl = Url::to(['/api/check-email']);
+
 $script = <<< JS
     $(document).ready(function() {
         let emailCheckTimeout;
@@ -95,7 +105,7 @@ $script = <<< JS
                         },
                         success: function(response) {
                             if (response.available) {
-                                feedback.html('<small class="text-success"><i class="fas fa-check"></i> Email tersedia</small>');
+                                feedback.html('');
                                 $('#submit-btn').prop('disabled', false);
                             } else {
                                 feedback.html('<small class="text-danger"><i class="fas fa-times"></i> Email sudah terdaftar</small>');
@@ -104,6 +114,25 @@ $script = <<< JS
                         }
                     });
                 }, 500);
+            } else {
+                feedback.html('');
+            }
+        });
+
+        $('#user-password').on('input', function() {
+            const pass = $(this).val();
+            const feedback = $('#pass-feedback');
+            
+            const isValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(pass);
+            
+            if (pass.length > 0) {
+                if (!isValid) {
+                    feedback.html('<small class="text-danger"><i class="fas fa-times"></i> harus mengandung: huruf kapital, huruf kecil, angka, dan simbol (@$!%*?&)</small>');
+                    $('#submit-btn').prop('disabled', true);
+                } else {
+                    feedback.html('');
+                    $('#submit-btn').prop('disabled', false);
+                }
             } else {
                 feedback.html('');
             }

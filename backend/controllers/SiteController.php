@@ -314,19 +314,16 @@ class SiteController extends Controller
 
         $articles = [];
         foreach ($likes as $like) {
-            $bookmark = Bookmark::findOne(['article_url' => $like->article_url]);
-            if ($bookmark) {
-                $articles[] = [
-                    'url' => $bookmark->article_url,
-                    'title' => $bookmark->article_title,
-                    'author' => $bookmark->article_author,
-                    'description' => $bookmark->article_description,
-                    'content' => $bookmark->article_content,
-                    'source' => ['name' => $bookmark->article_source],
-                    'publishedAt' => $bookmark->published_at,
-                    'urlToImage' => $bookmark->url_to_image
-                ];
-            }
+            $articles[] = [
+                'url' => $like->article_url,
+                'title' => $like->article_title,
+                'author' => $like->article_author,
+                'description' => $like->article_description,
+                'content' => $like->article_content,
+                'source' => ['name' => $like->article_source],
+                'publishedAt' => $like->published_at,
+                'urlToImage' => $like->url_to_image
+            ];
         }
 
         $ratings = [];

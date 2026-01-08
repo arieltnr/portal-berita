@@ -5,8 +5,7 @@ use yii\helpers\Url;
 
 $this->title = 'Search: ' . Html::encode($query) . ' - Portal Berita';
 
-$placeholder = 'https://via.placeholder.com/200x150?text=No+Image';
-$imageUrl = Html::encode($article['urlToImage'] ?? $placeholder);
+$placeholder = Yii::getAlias('@web/images.png');
 
 ?>
 
@@ -22,6 +21,7 @@ $imageUrl = Html::encode($article['urlToImage'] ?? $placeholder);
     <p class="text-muted mb-4">Found <?= count($articles) ?> articles</p>
 
     <?php foreach ($articles as $article): ?>
+        <?php $imageUrl = Html::encode($article['urlToImage'] ?? $placeholder); ?>
         <div class="article-card" data-url="<?= Html::encode($article['url']) ?>">
             <img src="<?= $imageUrl ?>"
                 alt="Article Image"
@@ -123,15 +123,25 @@ $script = <<< JS
             const btn = $(this);
             const card = btn.closest('.article-card');
             const articleUrl = card.data('url');
-            const type = btn.data('type');
+            const typeData = btn.data('type');
+            const articleData = {
+                url: articleUrl,
+                title: card.find('.article-title').text().trim(),
+                author: card.find('.article-meta .fa-user').parent().text().trim(),
+                description: card.find('.article-description').text().trim(),
+                content: card.find('.text-muted').text().trim(),
+                source: {
+                    name: card.find('.article-meta .fa-building').parent().text().trim()
+                },
+                publishedAt: card.find('.article-meta .fa-calendar').parent().text().trim(),
+                urlToImage: card.find('.article-image').attr('src'),
+                type: typeData
+            };
 
             $.ajax({
-                url: 'rating',
+                url: '$rating',
                 method: 'POST',
-                data: {
-                    url: articleUrl,
-                    type: type
-                },
+                data: articleData,
                 success: function(response) {
                     if (response.success) {
                         const upBtn = card.find('.rating-up');
